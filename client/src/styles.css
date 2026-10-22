@@ -1,0 +1,16 @@
+:root{--bg:#f7f6f2;--fg:#1d2330;--mut:#5b6474;--line:#c9ccd3;--acc:#14554a;--err:#a3201f;--errbg:#fdecea}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 Georgia,serif}
+main{max-width:640px;margin:0 auto;padding:24px 16px 96px}
+.f{margin-bottom:18px}.f label{display:block;font-weight:700;margin-bottom:4px}
+input[type=text],input[type=email],textarea{width:100%;min-height:44px;padding:10px;border:1.5px solid var(--line);border-radius:4px;font:inherit}
+input[type=file]{width:100%;min-height:44px}
+[aria-invalid=true]{border:2px solid var(--err)}
+.err{color:var(--err);margin:4px 0 0}
+.hint{color:var(--mut);font-size:.9rem}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+button{min-height:44px;padding:0 20px;font:inherit;font-weight:700;border-radius:4px;border:1.5px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer}
+button[aria-disabled=true]{opacity:.65;cursor:progress}
+.summary,.panel{border:2px solid var(--err);background:var(--errbg);padding:14px 16px;border-radius:6px;margin-bottom:18px}
+.panel{border-color:var(--fg);background:#fff}
+.sticky{position:sticky;bottom:0;background:var(--bg);padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px))}
