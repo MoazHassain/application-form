@@ -6,7 +6,10 @@ import path from 'node:path';
 import { createApp } from '../src/app.js';
 
 async function boot() {
-  const app = createApp({ uploadDir: fs.mkdtempSync(path.join(os.tmpdir(), 'up-')) });
+  const app = createApp({
+    uploadDir: fs.mkdtempSync(path.join(os.tmpdir(), 'up-')),
+    dbPath: ':memory:',
+  });
   const server = app.listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
   const r = await fetch(`${base}/api/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: 'sam.demo' }) });
@@ -60,5 +63,23 @@ test('5. oversize file is rejected', async () => {
   const c = await boot();
   const big = new Blob(['%PDF-', new Uint8Array(3 * 1024 * 1024)], { type: 'application/pdf' });
   assert.equal((await send(c, 'k5', form(big))).status, 422);
+  c.server.close();
+});
+
+test('6. a duplicate application with a new key returns 409', async () => {
+  const c = await boot();
+  assert.equal((await send(c, 'first')).status, 201);
+  assert.equal((await send(c, 'second')).status, 409);
+  c.server.close();
+});
+
+test('7. the database itself enforces UNIQUE(user_id, role_id)', async () => {
+  const c = await boot();
+  assert.equal((await send(c, 'a')).status, 201);
+  const dup = c.app.locals.db.prepare(
+    `INSERT INTO applications (id, user_id, role_id, name, email, file_id, file_name)
+     VALUES ('x', 'sam.demo', 'role-12', 'n', 'e', 'f', 'f')`
+  );
+  assert.throws(() => dup.run(), /UNIQUE constraint failed/);
   c.server.close();
 });

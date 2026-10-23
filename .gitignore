@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+node_modules/
+server/uploads/
+server/*.db
+server/*.db-wal
+server/*.db-shm
